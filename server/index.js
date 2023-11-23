@@ -40,7 +40,7 @@ app.use('/api', require('./routes/messageRouter'));
 //#endregion
 
 
-const URI = process.env.MONGODB_URL;
+const URI = process.env.MONGODB_URI;
 mongoose.connect(URI, {
     useCreateIndex:true,
     useFindAndModify:false,

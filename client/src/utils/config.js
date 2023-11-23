@@ -1,5 +1,5 @@
-export const BASE_URL = process.env.REACT_APP_BASE_URL;
-export const API_URL = process.env.REACT_APP_API_URL;
-export const PRESET_KEY= process.env.REACT_APP_PRESET_KEY;
-export const CLOUDINARY_URL= process.env.REACT_APP_CLOUDINARY_URL;
-export const CLOUD_NAME= process.env.REACT_APP_CLOUD_NAME;
+export const BASE_URL = `http://localhost:${process.env.PORT || 3000}`;
+export const API_URL = `http://localhost:${process.env.PORT || 3003}/api/`;
+export const PRESET_KEY = "chat-app";
+export const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dpo25fsfu/image/upload";
+export const CLOUD_NAME = "dpo25fsfu";

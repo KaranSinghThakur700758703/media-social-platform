@@ -1,49 +1,49 @@
-import {CLOUD_NAME} from '../utils/config'
-import {PRESET_KEY} from '../utils/config'
-import {CLOUDINARY_URL} from '../utils/config'
+import { CLOUD_NAME, PRESET_KEY, CLOUDINARY_URL } from '../utils/config';
 
 export const checkImage = (file) => {
-    let err = "";
-    if(!file){
-        return err = "File does not exist.";
-    }
-//?1 mb
-    if(file.size > 1024 * 1024){
-         return (err = "File size must be less than 1 Mb.");
-    }
+  if (!file) {
+    throw new Error("File does not exist.");
+  }
 
-    if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
-      return (err = "Image must be jpeg or png.");
-    }
+  // 1 MB
+  if (file.size > 1024 * 1024) {
+    throw new Error("File size must be less than 1 Mb.");
+  }
 
-    return err;
-}
-
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+    throw new Error("Image must be jpeg or png.");
+  }
+};
 
 export const imageUpload = async (images) => {
-    let imgArr = [];
-    for(const item of images){
-        const formData = new FormData();
+  let imgArr = [];
 
-        if(item.camera){
-            formData.append("file", item.camera);
-        }else{
-            formData.append("file", item);  
-        }
+  for (const item of images) {
+    try {
+      checkImage(item);
 
-        
-        formData.append("upload_preset", PRESET_KEY);
-        formData.append("cloud_name", CLOUD_NAME);
+      const formData = new FormData();
+      formData.append("file", item.camera || item);
+      formData.append("upload_preset", PRESET_KEY);
+      formData.append("cloud_name", CLOUD_NAME);
 
-        const res = await fetch(CLOUDINARY_URL, {
-            method: "POST",
-            body: formData
-        })
+      const res = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
 
-        const data = await res.json();
-        imgArr.push({ public_id: data.public_id, url: data.secure_url });
-        
-      
+      if (!res.ok) {
+        throw new Error(`Image upload failed with status ${res.status}`);
+      }
+
+      const data = await res.json();
+      imgArr.push({ public_id: data.public_id, url: data.secure_url });
+    } catch (error) {
+      console.error("Image upload error:", error);
+      // Handle the error as needed, e.g., show a user-friendly message
     }
-    return imgArr;
-}
+  }
+
+  return imgArr;
+};
+
